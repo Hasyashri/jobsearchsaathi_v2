@@ -1,0 +1,74 @@
+{
+  "data_scientist_junior": {
+    "title": "Junior Data Scientist",
+    "seniority": "junior",
+    "required_skills": ["python", "sql", "pandas", "numpy", "scikit-learn", "matplotlib"],
+    "nice_to_have_skills": ["tableau", "git", "machine learning", "seaborn"]
+  },
+  "data_scientist_mid": {
+    "title": "Data Scientist",
+    "seniority": "mid",
+    "required_skills": ["python", "sql", "pandas", "numpy", "scikit-learn", "machine learning", "git", "a/b testing"],
+    "nice_to_have_skills": ["tensorflow", "pytorch", "apache spark", "docker", "deep learning"]
+  },
+  "data_scientist_senior": {
+    "title": "Senior Data Scientist",
+    "seniority": "senior",
+    "required_skills": ["python", "sql", "machine learning", "deep learning", "apache spark", "docker", "git", "a/b testing", "tensorflow"],
+    "nice_to_have_skills": ["kubernetes", "mlops", "pytorch", "natural language processing", "aws"]
+  },
+  "ml_engineer_junior": {
+    "title": "Junior ML Engineer",
+    "seniority": "junior",
+    "required_skills": ["python", "tensorflow", "pytorch", "scikit-learn", "git", "docker"],
+    "nice_to_have_skills": ["kubernetes", "sql", "mlops", "apache kafka", "rest api"]
+  },
+  "ml_engineer_mid": {
+    "title": "ML Engineer",
+    "seniority": "mid",
+    "required_skills": ["python", "tensorflow", "pytorch", "docker", "kubernetes", "mlops", "git", "sql"],
+    "nice_to_have_skills": ["apache spark", "apache kafka", "aws", "ci/cd", "apache airflow"]
+  },
+  "ml_engineer_senior": {
+    "title": "Senior ML Engineer",
+    "seniority": "senior",
+    "required_skills": ["python", "tensorflow", "pytorch", "kubernetes", "mlops", "aws", "ci/cd", "apache kafka", "apache spark"],
+    "nice_to_have_skills": ["terraform", "grafana", "rust", "go", "deep learning"]
+  },
+  "data_analyst": {
+    "title": "Data Analyst",
+    "seniority": "mid",
+    "required_skills": ["sql", "excel", "python", "tableau", "pandas"],
+    "nice_to_have_skills": ["power bi", "r", "matplotlib", "seaborn", "git"]
+  },
+  "data_engineer": {
+    "title": "Data Engineer",
+    "seniority": "mid",
+    "required_skills": ["python", "sql", "apache spark", "apache airflow", "apache kafka", "docker", "aws", "git"],
+    "nice_to_have_skills": ["dbt", "kubernetes", "terraform", "data warehouse", "elasticsearch"]
+  },
+  "backend_developer": {
+    "title": "Backend Developer",
+    "seniority": "mid",
+    "required_skills": ["python", "fastapi", "postgresql", "docker", "git", "rest api", "sql"],
+    "nice_to_have_skills": ["redis", "kubernetes", "ci/cd", "aws", "grpc"]
+  },
+  "frontend_developer": {
+    "title": "Frontend Developer",
+    "seniority": "mid",
+    "required_skills": ["javascript", "typescript", "react", "git", "rest api"],
+    "nice_to_have_skills": ["vue", "angular", "node.js", "graphql", "docker"]
+  },
+  "devops_engineer": {
+    "title": "DevOps Engineer",
+    "seniority": "mid",
+    "required_skills": ["docker", "kubernetes", "terraform", "ci/cd", "aws", "linux", "bash", "git"],
+    "nice_to_have_skills": ["ansible", "prometheus", "grafana", "python", "jenkins"]
+  },
+  "fullstack_developer": {
+    "title": "Full Stack Developer",
+    "seniority": "mid",
+    "required_skills": ["javascript", "typescript", "react", "node.js", "postgresql", "docker", "git", "rest api"],
+    "nice_to_have_skills": ["graphql", "redis", "aws", "ci/cd", "kubernetes"]
+  }
+}

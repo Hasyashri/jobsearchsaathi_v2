@@ -1,0 +1,359 @@
+{
+  "data_scientist": {
+    "role_id": "data_scientist",
+    "title": "Data Scientist",
+    "seniority": "mid",
+    "required_skills": [
+      "python",
+      "machine learning",
+      "sql",
+      "pandas",
+      "numpy",
+      "scikit-learn",
+      "statistics",
+      "data visualization"
+    ],
+    "nice_to_have_skills": [
+      "tensorflow",
+      "pytorch",
+      "spark",
+      "aws",
+      "docker",
+      "mlflow",
+      "tableau",
+      "r"
+    ],
+    "description": "Builds ML models, analyses data, and derives business insights."
+  },
+  "ml_engineer": {
+    "role_id": "ml_engineer",
+    "title": "Machine Learning Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "python",
+      "machine learning",
+      "deep learning",
+      "tensorflow",
+      "pytorch",
+      "docker",
+      "kubernetes",
+      "mlops"
+    ],
+    "nice_to_have_skills": [
+      "aws",
+      "azure",
+      "spark",
+      "kafka",
+      "ray",
+      "triton",
+      "faiss",
+      "mlflow"
+    ],
+    "description": "Productionises ML models and builds scalable training pipelines."
+  },
+  "ai_engineer": {
+    "role_id": "ai_engineer",
+    "title": "AI Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "python",
+      "large language models",
+      "hugging face",
+      "openai api",
+      "langchain",
+      "retrieval augmented generation",
+      "faiss",
+      "fastapi"
+    ],
+    "nice_to_have_skills": [
+      "tensorflow",
+      "pytorch",
+      "docker",
+      "aws",
+      "vector database",
+      "fine-tuning",
+      "prompt engineering",
+      "mlflow"
+    ],
+    "description": "Builds AI-powered products using LLMs, RAG, and agentic workflows."
+  },
+  "data_analyst": {
+    "role_id": "data_analyst",
+    "title": "Data Analyst",
+    "seniority": "mid",
+    "required_skills": [
+      "sql",
+      "excel",
+      "python",
+      "tableau",
+      "data visualization",
+      "statistics",
+      "power bi",
+      "reporting"
+    ],
+    "nice_to_have_skills": [
+      "r",
+      "pandas",
+      "matplotlib",
+      "looker",
+      "dbt",
+      "snowflake",
+      "bigquery",
+      "machine learning"
+    ],
+    "description": "Transforms raw data into actionable business insights."
+  },
+  "data_engineer": {
+    "role_id": "data_engineer",
+    "title": "Data Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "python",
+      "sql",
+      "apache spark",
+      "apache airflow",
+      "dbt",
+      "apache kafka",
+      "data warehousing",
+      "etl"
+    ],
+    "nice_to_have_skills": [
+      "aws",
+      "gcp",
+      "snowflake",
+      "bigquery",
+      "kubernetes",
+      "terraform",
+      "scala",
+      "flink"
+    ],
+    "description": "Designs and maintains data pipelines and infrastructure."
+  },
+  "software_engineer": {
+    "role_id": "software_engineer",
+    "title": "Software Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "python",
+      "javascript",
+      "git",
+      "sql",
+      "rest api",
+      "docker",
+      "agile",
+      "testing"
+    ],
+    "nice_to_have_skills": [
+      "typescript",
+      "react",
+      "node.js",
+      "kubernetes",
+      "aws",
+      "ci/cd",
+      "postgresql",
+      "redis"
+    ],
+    "description": "Designs and builds production software systems."
+  },
+  "backend_engineer": {
+    "role_id": "backend_engineer",
+    "title": "Backend Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "python",
+      "sql",
+      "rest api",
+      "docker",
+      "postgresql",
+      "git",
+      "ci/cd",
+      "testing"
+    ],
+    "nice_to_have_skills": [
+      "fastapi",
+      "django",
+      "flask",
+      "redis",
+      "kubernetes",
+      "aws",
+      "kafka",
+      "graphql"
+    ],
+    "description": "Builds server-side APIs and business logic."
+  },
+  "frontend_engineer": {
+    "role_id": "frontend_engineer",
+    "title": "Frontend Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "javascript",
+      "react",
+      "typescript",
+      "html",
+      "css",
+      "git",
+      "rest api",
+      "testing"
+    ],
+    "nice_to_have_skills": [
+      "next.js",
+      "vue",
+      "angular",
+      "tailwind",
+      "webpack",
+      "jest",
+      "figma",
+      "graphql"
+    ],
+    "description": "Builds responsive web interfaces and user experiences."
+  },
+  "devops_engineer": {
+    "role_id": "devops_engineer",
+    "title": "DevOps Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "docker",
+      "kubernetes",
+      "ci/cd",
+      "linux",
+      "terraform",
+      "aws",
+      "git",
+      "monitoring"
+    ],
+    "nice_to_have_skills": [
+      "ansible",
+      "jenkins",
+      "prometheus",
+      "grafana",
+      "helm",
+      "azure",
+      "python",
+      "bash"
+    ],
+    "description": "Automates infrastructure and deployment pipelines."
+  },
+  "nlp_engineer": {
+    "role_id": "nlp_engineer",
+    "title": "NLP Engineer",
+    "seniority": "mid",
+    "required_skills": [
+      "python",
+      "natural language processing",
+      "hugging face",
+      "pytorch",
+      "machine learning",
+      "text classification",
+      "named entity recognition"
+    ],
+    "nice_to_have_skills": [
+      "tensorflow",
+      "large language models",
+      "langchain",
+      "faiss",
+      "spacy",
+      "nltk",
+      "transformers",
+      "mlflow"
+    ],
+    "description": "Builds language understanding and generation systems."
+  },
+  "junior_data_scientist": {
+    "role_id": "junior_data_scientist",
+    "title": "Junior Data Scientist",
+    "seniority": "junior",
+    "required_skills": [
+      "python",
+      "sql",
+      "machine learning",
+      "pandas",
+      "numpy",
+      "statistics",
+      "data visualization"
+    ],
+    "nice_to_have_skills": [
+      "scikit-learn",
+      "tableau",
+      "r",
+      "git",
+      "excel",
+      "jupyter",
+      "power bi"
+    ],
+    "description": "Entry-level data science role. Strong Python and statistics required."
+  },
+  "senior_data_scientist": {
+    "role_id": "senior_data_scientist",
+    "title": "Senior Data Scientist",
+    "seniority": "senior",
+    "required_skills": [
+      "python",
+      "machine learning",
+      "deep learning",
+      "sql",
+      "spark",
+      "mlflow",
+      "statistics",
+      "leadership"
+    ],
+    "nice_to_have_skills": [
+      "tensorflow",
+      "pytorch",
+      "kubernetes",
+      "aws",
+      "reinforcement learning",
+      "causal inference",
+      "a/b testing"
+    ],
+    "description": "Leads ML initiatives, mentors juniors, and designs ML systems."
+  },
+  "product_manager": {
+    "role_id": "product_manager",
+    "title": "Product Manager",
+    "seniority": "mid",
+    "required_skills": [
+      "agile",
+      "jira",
+      "sql",
+      "data analysis",
+      "communication",
+      "product roadmap",
+      "user research",
+      "stakeholder management"
+    ],
+    "nice_to_have_skills": [
+      "python",
+      "tableau",
+      "a/b testing",
+      "figma",
+      "machine learning",
+      "excel",
+      "confluence"
+    ],
+    "description": "Defines product vision and translates user needs into features."
+  },
+  "business_analyst": {
+    "role_id": "business_analyst",
+    "title": "Business Analyst",
+    "seniority": "mid",
+    "required_skills": [
+      "sql",
+      "excel",
+      "data analysis",
+      "requirements gathering",
+      "communication",
+      "tableau",
+      "reporting",
+      "jira"
+    ],
+    "nice_to_have_skills": [
+      "python",
+      "power bi",
+      "agile",
+      "process mapping",
+      "stakeholder management",
+      "looker"
+    ],
+    "description": "Bridges business needs and technical solutions through data analysis."
+  }
+}

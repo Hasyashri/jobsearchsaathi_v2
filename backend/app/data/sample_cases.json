@@ -1,0 +1,64 @@
+{
+  "cases": [
+    {
+      "id": "TC001", "desc": "Strong junior data scientist",
+      "role_id": "data_scientist_junior",
+      "resume": "Jane Smith\n\nWork Experience\nJunior data scientist with 1 year of experience. Strong Python skills. Work with pandas and numpy daily for data analysis. Use scikit-learn for machine learning models. Use matplotlib for data visualization. Write SQL queries to extract data from PostgreSQL databases. Track all work using git.\n\nSkills\nPython, SQL, pandas, numpy, scikit-learn, matplotlib, git",
+      "expected_label": "Excellent", "score_min": 60, "score_max": 100
+    },
+    {
+      "id": "TC002", "desc": "Data analyst to junior DS",
+      "role_id": "data_scientist_junior",
+      "resume": "Work Experience\n5 years as a data analyst. Expert in SQL and Excel. Create dashboards and do exploratory data analysis. Know basic Python for automation scripts. No formal machine learning experience.\n\nSkills\nSQL, Excel, Tableau, Python",
+      "expected_label": "Fair", "score_min": 20, "score_max": 65
+    },
+    {
+      "id": "TC003", "desc": "Backend dev to ML engineer",
+      "role_id": "ml_engineer_mid",
+      "resume": "Work Experience\nSoftware engineer with 3 years building REST APIs using Django and Flask. Comfortable with Docker and Linux. Use git for version control. Strong SQL skills. No machine learning experience.\n\nSkills\nPython, Django, Flask, Docker, SQL, git, Linux",
+      "expected_label": "Fair", "score_min": 15, "score_max": 60
+    },
+    {
+      "id": "TC004", "desc": "Senior data scientist strong fit",
+      "role_id": "data_scientist_senior",
+      "resume": "Work Experience\n7 years as a data scientist. Expert in Python, PyTorch, TensorFlow, scikit-learn. Built deep learning models for NLP and computer vision. Conducted A/B testing at scale. Deployed models using Docker and Kubernetes. Proficient in SQL and Spark.\n\nSkills\nPython, PyTorch, TensorFlow, scikit-learn, SQL, Spark, Docker, Kubernetes, git",
+      "expected_label": "Excellent", "score_min": 55, "score_max": 100
+    },
+    {
+      "id": "TC005", "desc": "ML engineer strong fit",
+      "role_id": "ml_engineer_mid",
+      "resume": "Work Experience\nML engineer with 4 years experience. Build and deploy ML models using PyTorch and TensorFlow. Orchestrate with Kubernetes and Docker. Set up MLOps pipelines. Use Kafka for data streaming. Work in AWS.\n\nSkills\nPython, PyTorch, TensorFlow, Docker, Kubernetes, MLOps, AWS, Kafka, SQL, git",
+      "expected_label": "Excellent", "score_min": 60, "score_max": 100
+    },
+    {
+      "id": "TC006", "desc": "Data engineer strong fit",
+      "role_id": "data_engineer",
+      "resume": "Work Experience\nData engineer with 5 years experience. Build ETL pipelines using Spark and Airflow. Stream data with Kafka. Store in AWS S3 and Redshift. Use Docker for containerisation. Write Python and SQL daily.\n\nSkills\nPython, SQL, Spark, Airflow, Kafka, Docker, AWS, git",
+      "expected_label": "Excellent", "score_min": 60, "score_max": 100
+    },
+    {
+      "id": "TC007", "desc": "Frontend developer strong fit",
+      "role_id": "frontend_developer",
+      "resume": "Work Experience\nFrontend developer with 3 years experience. Build React applications with TypeScript. Consume REST APIs. Version control with Git. Some Docker experience.\n\nSkills\nJavaScript, TypeScript, React, Git, REST API, Docker",
+      "expected_label": "Excellent", "score_min": 60, "score_max": 100
+    },
+    {
+      "id": "TC008", "desc": "DevOps engineer strong fit",
+      "role_id": "devops_engineer",
+      "resume": "Work Experience\nDevOps engineer with 4 years experience. Manage infrastructure with Terraform and Ansible. Deploy on Kubernetes and Docker. Set up CI/CD pipelines with Jenkins and GitHub Actions. Work in AWS. Proficient in Linux and Bash.\n\nSkills\nDocker, Kubernetes, Terraform, Ansible, CI/CD, AWS, Linux, Bash, git",
+      "expected_label": "Excellent", "score_min": 65, "score_max": 100
+    },
+    {
+      "id": "TC009", "desc": "Career changer — non-technical",
+      "role_id": "data_scientist_junior",
+      "resume": "Work Experience\nMarketing professional with 5 years in campaign management. Strong communication and teamwork. Some experience with Excel spreadsheets for tracking budgets. No programming background.\n\nSkills\nExcel, communication, teamwork",
+      "expected_label": "Needs Work", "score_min": 0, "score_max": 40
+    },
+    {
+      "id": "TC010", "desc": "Full stack developer strong fit",
+      "role_id": "fullstack_developer",
+      "resume": "Work Experience\nFull stack developer with 3 years. Build React frontends and Node.js backends. Use TypeScript throughout. Store data in PostgreSQL. Deploy with Docker. REST API design. Version control with Git.\n\nSkills\nJavaScript, TypeScript, React, Node.js, PostgreSQL, Docker, git, REST API",
+      "expected_label": "Excellent", "score_min": 65, "score_max": 100
+    }
+  ]
+}

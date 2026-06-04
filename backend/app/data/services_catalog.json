@@ -1,0 +1,236 @@
+[
+  {
+    "service_id": "kaggle_learn",
+    "title": "Kaggle Learn",
+    "provider": "Kaggle",
+    "url": "https://www.kaggle.com/learn",
+    "skills_covered": [
+      "python",
+      "pandas",
+      "scikit-learn",
+      "sql",
+      "machine learning",
+      "deep learning",
+      "natural language processing",
+      "data visualization"
+    ],
+    "categories": [
+      "ml_ai",
+      "data",
+      "programming_language"
+    ],
+    "free": true,
+    "level": "beginner",
+    "description": "Free micro-courses covering Python, ML, SQL, and data viz."
+  },
+  {
+    "service_id": "fast_ai",
+    "title": "fast.ai Practical Deep Learning",
+    "provider": "fast.ai",
+    "url": "https://course.fast.ai",
+    "skills_covered": [
+      "deep learning",
+      "pytorch",
+      "computer vision",
+      "natural language processing"
+    ],
+    "categories": [
+      "ml_ai"
+    ],
+    "free": true,
+    "level": "intermediate",
+    "description": "Top-down practical deep learning using PyTorch."
+  },
+  {
+    "service_id": "cs50",
+    "title": "CS50",
+    "provider": "Harvard / edX",
+    "url": "https://cs50.harvard.edu/x",
+    "skills_covered": [
+      "python",
+      "c",
+      "javascript",
+      "sql",
+      "algorithms",
+      "data structures"
+    ],
+    "categories": [
+      "programming_language"
+    ],
+    "free": true,
+    "level": "beginner",
+    "description": "Harvard's legendary intro CS course, free to audit."
+  },
+  {
+    "service_id": "google_ml",
+    "title": "Machine Learning Crash Course",
+    "provider": "Google",
+    "url": "https://developers.google.com/machine-learning/crash-course",
+    "skills_covered": [
+      "machine learning",
+      "tensorflow",
+      "python",
+      "numpy",
+      "pandas"
+    ],
+    "categories": [
+      "ml_ai",
+      "data"
+    ],
+    "free": true,
+    "level": "beginner",
+    "description": "Google's ML guide using TensorFlow."
+  },
+  {
+    "service_id": "docker_official",
+    "title": "Docker Getting Started",
+    "provider": "Docker",
+    "url": "https://docs.docker.com/get-started",
+    "skills_covered": [
+      "docker",
+      "containerisation"
+    ],
+    "categories": [
+      "devops"
+    ],
+    "free": true,
+    "level": "beginner",
+    "description": "Official hands-on Docker tutorial."
+  },
+  {
+    "service_id": "k8s_official",
+    "title": "Kubernetes Basics",
+    "provider": "Kubernetes",
+    "url": "https://kubernetes.io/docs/tutorials/kubernetes-basics",
+    "skills_covered": [
+      "kubernetes",
+      "docker",
+      "devops"
+    ],
+    "categories": [
+      "devops"
+    ],
+    "free": true,
+    "level": "intermediate",
+    "description": "Official interactive Kubernetes tutorial."
+  },
+  {
+    "service_id": "aws_skill_builder",
+    "title": "AWS Skill Builder",
+    "provider": "Amazon Web Services",
+    "url": "https://skillbuilder.aws",
+    "skills_covered": [
+      "aws",
+      "cloud computing",
+      "ec2",
+      "s3",
+      "lambda",
+      "cloudformation"
+    ],
+    "categories": [
+      "cloud",
+      "devops"
+    ],
+    "free": true,
+    "level": "beginner",
+    "description": "Free AWS learning hub with hundreds of digital courses."
+  },
+  {
+    "service_id": "mode_sql",
+    "title": "SQL Tutorial for Data Analysis",
+    "provider": "Mode Analytics",
+    "url": "https://mode.com/sql-tutorial",
+    "skills_covered": [
+      "sql",
+      "postgresql",
+      "data analysis"
+    ],
+    "categories": [
+      "database",
+      "data"
+    ],
+    "free": true,
+    "level": "beginner",
+    "description": "Interactive SQL tutorial with real datasets."
+  },
+  {
+    "service_id": "mlops_zoomcamp",
+    "title": "MLOps Zoomcamp",
+    "provider": "DataTalks.Club",
+    "url": "https://github.com/DataTalksClub/mlops-zoomcamp",
+    "skills_covered": [
+      "mlops",
+      "docker",
+      "kubernetes",
+      "airflow",
+      "mlflow",
+      "machine learning"
+    ],
+    "categories": [
+      "ml_ai",
+      "devops"
+    ],
+    "free": true,
+    "level": "intermediate",
+    "description": "Free MLOps course covering the full ML lifecycle in production."
+  },
+  {
+    "service_id": "hf_nlp",
+    "title": "HuggingFace NLP Course",
+    "provider": "Hugging Face",
+    "url": "https://huggingface.co/learn/nlp-course",
+    "skills_covered": [
+      "natural language processing",
+      "transformers",
+      "pytorch",
+      "bert"
+    ],
+    "categories": [
+      "ml_ai"
+    ],
+    "free": true,
+    "level": "intermediate",
+    "description": "End-to-end NLP with Transformers."
+  },
+  {
+    "service_id": "fullstack_open",
+    "title": "Full Stack Open",
+    "provider": "University of Helsinki",
+    "url": "https://fullstackopen.com",
+    "skills_covered": [
+      "javascript",
+      "react",
+      "node.js",
+      "rest api",
+      "graphql",
+      "typescript",
+      "docker"
+    ],
+    "categories": [
+      "programming_language",
+      "framework"
+    ],
+    "free": true,
+    "level": "intermediate",
+    "description": "University-quality full-stack JavaScript course, free."
+  },
+  {
+    "service_id": "dbt_learn",
+    "title": "dbt Learn",
+    "provider": "dbt Labs",
+    "url": "https://courses.getdbt.com",
+    "skills_covered": [
+      "dbt",
+      "sql",
+      "data warehouse",
+      "analytics engineering"
+    ],
+    "categories": [
+      "data",
+      "database"
+    ],
+    "free": true,
+    "level": "beginner",
+    "description": "Free dbt fundamentals and advanced courses."
+  }
+]
