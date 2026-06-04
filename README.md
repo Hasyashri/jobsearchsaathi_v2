@@ -59,6 +59,7 @@ Upload a resume and either select a target role or paste a job description. JobS
 
 ## Architecture
 
+```text
 User
   |
   v
