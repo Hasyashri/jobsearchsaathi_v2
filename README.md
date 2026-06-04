@@ -1,339 +1,627 @@
 # JobSearchSaathi v2
 
-**AI-powered resume gap analyser** — built to help newcomers, new graduates, and career changers understand *why* they are not getting interviews, and *exactly* what to fix.
+**AI Career Readiness & Resume Gap Analyzer** — built to help newcomers, new graduates, and career changers understand why they are not getting interviews, whether they should apply now, and what they should improve first.
+
+JobSearchSaathi analyzes a resume against either a target role or a real job description. It identifies skill gaps, certification gaps, experience gaps, ATS keyword gaps, and resume-quality issues, then returns an apply-ready verdict with practical next steps.
 
 ---
 
-## What it does
+## Problem
 
-Upload your resume and a job description. JobSearchSaathi runs a 5-pass NLP pipeline, then gives you:
+Many job seekers apply to roles without knowing why they are not receiving interviews. The issue may be:
 
-| Output | Description |
-|--------|-------------|
-| **Apply-Ready Verdict** | "Apply Now" / "Apply With Prep" / "Build First" — the one decision you actually need |
-| **Skill Gap Analysis** | Every required and preferred skill you are missing, with free learning resources |
-| **Certification Gaps** | Certs mentioned in the JD that are absent from your resume |
-| **Experience Gap** | Years required vs years implied in your resume |
-| **Resume Keyword Gaps** | ATS phrases in the JD not present in your resume |
-| **Resume Quality Score** | Bullet-by-bullet analysis: impact signal, action verbs, vagueness |
-| **Next Steps** | Prioritised action plan ranked by impact |
+* Missing required skills
+* Weak experience proof
+* Missing certifications
+* Poor ATS keyword alignment
+* Resume bullets that describe tasks but do not prove impact
+* Applying to roles beyond the candidate’s current level
+
+JobSearchSaathi helps candidates stop applying blindly by showing what is missing and what to fix first.
+
+---
+
+## What It Does
+
+Upload a resume and either select a target role or paste a job description. JobSearchSaathi runs a multi-pass NLP pipeline and returns a structured readiness report.
+
+| Output                   | Description                                                                 |
+| ------------------------ | --------------------------------------------------------------------------- |
+| **Apply-Ready Verdict**  | “Apply Now”, “Apply With Prep”, or “Build First”                            |
+| **Skill Gap Analysis**   | Required and preferred skills missing from the resume                       |
+| **Certification Gaps**   | Certifications mentioned in the job description but not found in the resume |
+| **Experience Gap**       | Years required by the job vs. experience implied from the resume            |
+| **ATS Keyword Gaps**     | Important job-description phrases missing from the resume                   |
+| **Resume Quality Score** | Bullet-level scoring for impact, action verbs, tool mentions, and vagueness |
+| **Learning Resources**   | Free resources mapped to missing skills                                     |
+| **Next Steps**           | Prioritized action plan ranked by impact                                    |
+| **Alternative Roles**    | Related roles the candidate may be more ready for                           |
+
+---
+
+## Key Features
+
+* Resume upload support for PDF, DOCX, and TXT
+* Resume + target role analysis
+* Resume + job description analysis
+* FastAPI backend with typed Pydantic schemas
+* React + Vite frontend
+* Multi-pass skill extraction pipeline
+* FAISS-based semantic retrieval for job-description skill discovery
+* HuggingFace LLM integration with optional OpenAI fallback
+* PII redaction before NLP processing
+* Skill evidence, confidence scores, and low-confidence flags
+* Resume-quality scoring for experience/project bullets
+* Apply-ready verdict engine
+* Docker and docker-compose support
 
 ---
 
 ## Architecture
 
+```text
+User
+  |
+  v
+React + Vite Frontend
+  - HomePage.jsx
+  - ResultsPage.jsx
+  - Resume upload
+  - JD paste / role selection
+  |
+  | HTTP multipart/form-data
+  v
+FastAPI Backend
+  - POST /analyze
+  - POST /analyze/text
+  - POST /analyze/jd
+  - GET /roles
+  - GET /services
+  - POST /feedback
+  - POST /admin/rebuild-catalog
+  |
+  v
+Analysis Pipeline
+  1. Resume parser
+  2. PII redaction
+  3. Section detection
+  4. Alias matching
+  5. Fuzzy matching
+  6. BERT NER
+  7. Semantic matching
+  8. FAISS retrieval for JD skills
+  9. JD gap analysis
+  10. Resume quality scoring
+  11. Apply-ready verdict
+  |
+  v
+JSON Response
+  - Readiness score
+  - Skill gaps
+  - Certification gaps
+  - Experience gap
+  - Keyword gaps
+  - Resume quality
+  - Next steps
 ```
-                        ┌─────────────────────────────────┐
-                        │         React + Vite SPA         │
-                        │  HomePage  ──►  ResultsPage      │
-                        │  (dual file-blocks + mode toggle) │
-                        └────────────┬────────────────────┘
-                                     │ HTTP (form multipart)
-                        ┌────────────▼────────────────────┐
-                        │     FastAPI (ASGI, uvicorn)      │
-                        │  POST /analyze/jd               │
-                        │  POST /analyze  (template mode) │
-                        │  GET  /roles  GET /services     │
-                        └──────────────────────────────────┘
-                                  │
-          ┌───────────────────────┼────────────────────────────┐
-          │                       │                            │
-   ┌──────▼──────┐    ┌───────────▼────────────┐  ┌──────────▼────────┐
-   │  resume_    │    │    5-pass NLP pipeline  │  │   jd_parser.py    │
-   │  parser.py  │    │                        │  │  (skills / certs / │
-   │  (PDF/DOCX/ │    │  Pass 1: alias match   │  │   exp / keywords)  │
-   │   TXT)      │    │  Pass 2: fuzzy (RapidF) │  └──────────┬────────┘
-   └─────────────┘    │  Pass 3: BERT NER      │             │
-                      │  Pass 4: semantic SBERT │  ┌──────────▼────────┐
-                      │  Pass 5: RAG / FAISS   │  │  jd_gap_analyzer  │
-                      └───────────┬────────────┘  │  + apply verdict  │
-                                  │               └──────────┬────────┘
-                      ┌───────────▼────────────┐             │
-                      │   resume_quality.py     │  ┌──────────▼────────┐
-                      │   (bullet scoring)      │  │   llm_service.py  │
-                      └────────────────────────┘  │   HuggingFace +   │
-                                                   │   OpenAI fallback │
-                                                   └───────────────────┘
+
+---
+
+## NLP Pipeline
+
+JobSearchSaathi uses multiple extraction methods because no single technique catches all skill mentions in a resume.
+
+### Pass 1 — Alias Matching
+
+**File:** `skill_extractor.py`
+
+Exact string and alias matching against the skills catalog.
+
+Examples:
+
+* `ML` → `machine learning`
+* `k8s` → `kubernetes`
+* `sklearn` → `scikit-learn`
+* `tf` → `tensorflow`
+
+Why it matters:
+
+* Fast
+* High precision
+* Good for clearly listed skills
+* Easy to explain and debug
+
+---
+
+### Pass 2 — Fuzzy Matching
+
+**File:** `fuzzy_extractor.py`
+
+Uses RapidFuzz-style matching to catch spelling differences, spacing issues, and minor typos.
+
+Examples:
+
+* `scikit learn` → `scikit-learn`
+* `react js` → `react`
+* `pyhton` → `python`
+
+Why it matters:
+
+* Resumes often contain inconsistent formatting
+* Candidates may use alternate spellings
+* Helps reduce false negatives
+
+---
+
+### Pass 3 — BERT NER
+
+**File:** `ner_extractor.py`
+
+Uses a HuggingFace NER model to detect named entities and maps them to catalog skills using SBERT similarity.
+
+Current model:
+
+```text
+dslim/bert-base-NER
 ```
 
----
+Important note:
 
-## NLP Pipeline — why each pass exists
+This is a general-purpose NER model, not a skill-specific model. JobSearchSaathi uses it as a supplemental extraction pass only. The final skill must still map to the controlled skills catalog using similarity thresholds.
 
-### Pass 1 — Alias matching (`skill_extractor.py`)
-**Algorithm:** exact string match against a manually curated alias table.
-**Why:** fastest and highest precision. "ML" → "machine learning", "k8s" → "kubernetes".
-**Dataset used:** custom `skills_catalog.json` built from O*NET-SOC skill taxonomy.
+Why it matters:
 
-> **Real dataset:** [O*NET Content Model — Knowledge, Skills, Abilities](https://www.onetcenter.org/database.html#individual-files)
-> Download `Skills.txt` from the O*NET 28.0 database. Run `catalog_builder.py` to convert it.
+* Helps detect multi-word technical phrases
+* Useful when skills appear inside sentences
+* Adds recall beyond keyword matching
 
 ---
 
-### Pass 2 — Fuzzy matching (`fuzzy_extractor.py`)
-**Algorithm:** RapidFuzz `token_sort_ratio` with a configurable threshold (default 82).
-**Why:** catches typos, abbreviations, and partial matches that exact match misses.
-`"pytorch"` vs `"pyTorch"`, `"react js"` vs `"reactjs"`.
-**Why RapidFuzz over fuzzywuzzy:** 10–100× faster due to Levenshtein C extension; same API.
+### Pass 4 — Semantic Matching
+
+**File:** `semantic_matcher.py`
+
+Uses sentence embeddings to find skills described conceptually rather than directly named.
+
+Model:
+
+```text
+sentence-transformers/all-MiniLM-L6-v2
+```
+
+Examples:
+
+* “built data pipelines” may suggest data engineering skills
+* “optimized database queries” may suggest SQL or database performance
+* “created classification models” may suggest machine learning
+
+Why it matters:
+
+* Resumes do not always use exact skill names
+* Semantic similarity improves coverage
+* Confidence is capped lower because semantic matches are less certain than exact evidence
 
 ---
 
-### Pass 3 — BERT NER (`ner_extractor.py`)
-**Model:** `dslim/bert-base-NER` — fine-tuned on CoNLL-2003 for named entity recognition.
-**Why this model:** CoNLL-2003 includes technology entity labels. It surfaces skill names
-that appear in context ("worked with TensorFlow and Keras") without needing alias rules.
-**Why lazy-load:** model is 440 MB; loaded on first request, cached in memory.
+### Pass 5 — FAISS Retrieval for Job Descriptions
 
-> **Model card:** https://huggingface.co/dslim/bert-base-NER
+**File:** `rag_service.py`
 
----
+The resume pipeline extracts skills from the candidate’s resume. The FAISS retrieval layer works in the other direction: it reads the job description and retrieves skills the JD implies.
 
-### Pass 4 — Semantic matching (`semantic_matcher.py`)
-**Model:** `all-MiniLM-L6-v2` (sentence-transformers, 384-dim embeddings, 80 MB).
-**Why this model:** best quality-to-speed ratio for semantic search at this scale.
-Trained on 1B+ sentence pairs. Inference: ~5 ms per sentence on CPU.
-Finds `"built data pipelines"` → detects `"apache airflow"` context.
+How it works:
 
-> **Model card:** https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+1. Job description text is split into sentences
+2. Each sentence is embedded using SBERT
+3. FAISS retrieves the nearest catalog skills
+4. Missing retrieved skills become JD-aware gap candidates
 
----
+Why FAISS:
 
-### Pass 5 — RAG with FAISS (`rag_service.py`)
-**Algorithm:** FAISS `IndexFlatIP` (inner product = cosine on L2-normalised vectors).
-**Why FAISS over a vector DB:** in-process, zero network overhead, sub-millisecond search
-at our scale (~200 skills). `IndexFlatIP` gives exact results — no approximation needed here.
-**Why inner product instead of L2:** cosine similarity is scale-invariant; normalising once
-and using dot product is faster than computing L2 distances at query time.
-**How it works:** all skill names + aliases are embedded at startup and stored in FAISS.
-At query time, each sentence from the JD is encoded and the top-k nearest skills are retrieved.
-
-> **FAISS paper:** Johnson et al. (2017). *Billion-scale similarity search with GPUs*.
-> https://arxiv.org/abs/1702.08734
+* Runs locally in-process
+* No external vector database required
+* Fast for a small-to-medium skills catalog
+* Good fit for a portfolio/demo application
 
 ---
 
-## LLM Integration (`llm_service.py`)
+## JD Gap Analysis
 
-**Primary:** HuggingFace Inference API — `google/flan-t5-large` (780M params)
-**Fallback:** OpenAI GPT-3.5-turbo via `OPENAI_API_KEY`
-**Fallback-of-fallback:** deterministic template strings (app always works, even offline)
+**File:** `jd_gap_analyzer.py`
 
-**Why flan-t5-large:**
-- Instruction-tuned on 1,800+ tasks (Flan dataset from Google Brain)
-- Free HF Inference API tier — no credit card needed
-- 3–5 s latency acceptable for a gap analysis tool
-- Outperforms GPT-2 on structured output tasks by large margin
+When the user provides a real job description, the system analyzes four gap categories.
 
-**Prompt design:**
-- Role assignment: `"You are a career coach specialising in tech hiring."`
-- Output constraint: `"Answer in exactly 2 sentences."`
-- Chain-of-thought not used (flan-t5 responds better to direct instruction at this size)
-
-> **Flan paper:** Chung et al. (2022). *Scaling Instruction-Finetuned Language Models*.
-> https://arxiv.org/abs/2210.11416
+| Gap Category          | What It Checks                                                  |
+| --------------------- | --------------------------------------------------------------- |
+| **Skill Gap**         | Required and preferred skills in the JD not found in the resume |
+| **Certification Gap** | Certifications mentioned in the JD but absent from the resume   |
+| **Experience Gap**    | Required years of experience vs. resume-implied experience      |
+| **Keyword Gap**       | ATS-style phrases from the JD missing in the resume             |
 
 ---
 
-## Resume Quality Analyser (`resume_quality.py`)
+## Apply-Ready Verdict Logic
 
-Scores each resume bullet on three signals:
+JobSearchSaathi gives a simple verdict instead of only showing a score.
 
-| Signal | Weight | What it measures |
-|--------|--------|-----------------|
-| Impact | +0.40 | Numbers, %, $, scale words (10×, 50k users) |
-| Action verb | +0.25 | Built, deployed, reduced, led, designed… |
-| Tool mention | +0.20 | Technology names in the bullet |
-| Vagueness | −0.30 | "worked on", "helped with", "responsible for" |
+| Required Skill Coverage | Verdict             | Meaning                                                |
+| ----------------------- | ------------------- | ------------------------------------------------------ |
+| `>= 70%`                | **Apply Now**       | Candidate is reasonably aligned and should apply       |
+| `40% – 69%`             | **Apply With Prep** | Candidate can apply but should fix key gaps first      |
+| `< 40%`                 | **Build First**     | Candidate should build skills/projects before applying |
 
-**Research basis:**
-- Ladders eye-tracking study: recruiters spend 6 seconds per resume
-- LinkedIn data: 47% of resumes rejected for lack of demonstrated impact
-- Harvard OCS guidelines: every bullet should have Action + Task + Result
+The verdict is designed to help users decide whether to apply now, improve their resume, build proof, or target a more realistic role.
 
 ---
 
-## Datasets
+## LLM Integration
 
-| Dataset | Use | Link |
-|---------|-----|------|
-| O*NET 28.0 Skills | Skills catalog (2,300+ canonical skills + aliases) | https://www.onetcenter.org/database.html |
-| Kaggle Resume Dataset | Testing NER & fuzzy matching accuracy | https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset |
-| LinkedIn Job Postings (Kaggle) | JD parser validation | https://www.kaggle.com/datasets/arshkon/linkedin-job-postings |
-| CoNLL-2003 | BERT NER training set (used by dslim model) | https://huggingface.co/datasets/conll2003 |
-| SNLI + MultiNLI | MiniLM semantic model training (via SBERT) | https://nlp.stanford.edu/projects/snli/ |
+**File:** `llm_service.py`
+
+JobSearchSaathi can use an LLM to generate short, human-friendly explanations.
+
+Primary provider:
+
+```text
+HuggingFace Inference API
+```
+
+Optional fallback:
+
+```text
+OpenAI API
+```
+
+Offline fallback:
+
+```text
+Deterministic template strings
+```
+
+LLM tasks:
+
+* Explain why a missing skill matters
+* Generate a short apply-ready verdict message
+* Rewrite weak resume bullets
+* Convert technical gaps into plain-English next steps
+
+The app is designed to degrade gracefully. If external APIs are unavailable, it still returns useful template-based output.
+
+---
+
+## Resume Quality Analyzer
+
+**File:** `resume_quality.py`
+
+The resume-quality module checks whether resume bullets demonstrate evidence, not just responsibilities.
+
+| Signal       |  Weight | What It Looks For                                      |
+| ------------ | ------: | ------------------------------------------------------ |
+| Impact       | `+0.40` | Numbers, metrics, percentages, scale, results          |
+| Action Verb  | `+0.25` | Built, deployed, reduced, trained, designed, automated |
+| Tool Mention | `+0.20` | Python, SQL, FastAPI, Docker, TensorFlow, FAISS, etc.  |
+| Vagueness    | `-0.30` | “worked on”, “helped with”, “responsible for”          |
+
+Output labels:
+
+* **Strong**
+* **Fair**
+* **Weak**
+
+Each weak bullet receives a specific improvement suggestion.
+
+---
+
+## Data Sources
+
+| Data Source                | Status             | Use                                   |
+| -------------------------- | ------------------ | ------------------------------------- |
+| `skills_catalog.json`      | Implemented        | Controlled skill names and aliases    |
+| `role_templates.json`      | Implemented        | Template-based role matching          |
+| `services_catalog.json`    | Implemented        | Learning resources for missing skills |
+| `sample_cases.json`        | Implemented        | Testing and evaluation examples       |
+| O*NET Skills Data          | Used / rebuildable | Source for expanding skills catalog   |
+| HuggingFace model cards    | Indirect           | Pretrained model documentation        |
+| Kaggle resume/job datasets | Optional / future  | Larger evaluation and validation      |
+
+Important note:
+
+Some datasets are used directly by the application, while others are used as references, pretrained-model sources, or future evaluation datasets.
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Why |
-|-------|-----------|-----|
-| Backend API | FastAPI + Pydantic v2 | Async, auto-docs, typed validation |
-| NLP Pass 1-2 | RapidFuzz | 100× faster than fuzzywuzzy, C extension |
-| NLP Pass 3 | HuggingFace Transformers (BERT) | Pre-trained NER, no labelling needed |
-| NLP Pass 4 | sentence-transformers (SBERT) | Best CPU semantic similarity at 80 MB |
-| NLP Pass 5 | FAISS | In-process vector search, sub-ms at 200 skills |
-| LLM | HuggingFace Inference API + OpenAI | Free tier primary, paid fallback |
-| Frontend | React 18 + Vite | Fast HMR, tree-shaking, modern JSX |
-| Packaging | Docker + docker-compose | One-command deploy |
-| File parsing | PyMuPDF (PDF) + python-docx | Best extraction quality for each format |
+| Layer           | Technology                                                       |
+| --------------- | ---------------------------------------------------------------- |
+| Backend         | Python 3.11, FastAPI, Pydantic                                   |
+| Frontend        | React 18, Vite                                                   |
+| NLP             | Regex, RapidFuzz, HuggingFace Transformers, SentenceTransformers |
+| Semantic Search | FAISS                                                            |
+| LLM             | HuggingFace Inference API, optional OpenAI fallback              |
+| Data            | JSON catalogs, O*NET-based skills source                         |
+| Deployment      | Docker, docker-compose, Nginx                                    |
+| Testing         | Pytest                                                           |
+| File Parsing    | PDF, DOCX, TXT parsing                                           |
 
 ---
 
-## How to run
+## API Reference
 
-### Option A — Docker (recommended)
+| Endpoint                 | Method | Description                                |
+| ------------------------ | ------ | ------------------------------------------ |
+| `/analyze`               | POST   | Resume + role ID template analysis         |
+| `/analyze/text`          | POST   | Plain-text resume + role ID analysis       |
+| `/analyze/jd`            | POST   | Resume + job description full gap analysis |
+| `/roles`                 | GET    | List available role templates              |
+| `/roles/{role_id}`       | GET    | Get one role template                      |
+| `/services`              | GET    | List learning resources                    |
+| `/feedback`              | POST   | Submit skill correction feedback           |
+| `/admin/rebuild-catalog` | POST   | Rebuild skills catalog                     |
+| `/admin/catalog-stats`   | GET    | Return catalog statistics                  |
+| `/health`                | GET    | Health check                               |
+| `/docs`                  | GET    | Swagger API documentation                  |
+
+---
+
+## Project Structure
+
+```text
+jobsearchsaathi-v2/
+├── backend/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── app/
+│       ├── main.py
+│       ├── config.py
+│       ├── logging_config.py
+│       ├── schemas.py
+│       ├── data/
+│       │   ├── role_templates.json
+│       │   ├── skills_catalog.json
+│       │   ├── services_catalog.json
+│       │   └── sample_cases.json
+│       ├── routers/
+│       │   ├── analyze.py
+│       │   ├── roles.py
+│       │   ├── services.py
+│       │   ├── feedback.py
+│       │   └── admin.py
+│       ├── services/
+│       │   ├── resume_parser.py
+│       │   ├── skill_extractor.py
+│       │   ├── fuzzy_extractor.py
+│       │   ├── ner_extractor.py
+│       │   ├── semantic_matcher.py
+│       │   ├── rag_service.py
+│       │   ├── jd_parser.py
+│       │   ├── jd_gap_analyzer.py
+│       │   ├── llm_service.py
+│       │   ├── resume_quality.py
+│       │   ├── readiness_engine.py
+│       │   ├── recommendation_engine.py
+│       │   ├── action_plan_engine.py
+│       │   ├── pipeline.py
+│       │   ├── catalog_builder.py
+│       │   └── text_utils.py
+│       └── tests/
+│           ├── conftest.py
+│           ├── test_api.py
+│           └── test_services.py
+├── frontend/
+│   ├── Dockerfile
+│   ├── index.html
+│   ├── nginx.conf
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+│       ├── main.jsx
+│       ├── styles.css
+│       ├── api/
+│       │   └── client.js
+│       ├── pages/
+│       │   ├── HomePage.jsx
+│       │   └── ResultsPage.jsx
+│       └── components/
+│           ├── AltRoles.jsx
+│           ├── CareerPath.jsx
+│           ├── GapList.jsx
+│           ├── ScoreGauge.jsx
+│           └── SkillsGrid.jsx
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+---
+
+## How to Run
+
+### Option 1 — Docker
 
 ```bash
-git clone <repo>
-cd jobsearchsaathi-v2
-
-# Copy and fill in your API keys
-cp .env.example .env
-# Set: HF_TOKEN, OPENAI_API_KEY (optional)
+git clone https://github.com/Hasyashri/jobsearchsaathi_v2.git
+cd jobsearchsaathi_v2
 
 docker-compose up --build
 ```
 
-Open http://localhost:5173
+Then open:
+
+```text
+http://localhost
+```
+
+or, for local Vite development:
+
+```text
+http://localhost:5173
+```
 
 ---
 
-### Option B — Local development
+### Option 2 — Local Development
 
-**Backend:**
+Backend:
+
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
+
+# Windows
+venv\Scripts\activate
+
+# macOS/Linux
+source venv/bin/activate
+
 pip install -r requirements.txt
-
-# On first run, generate the skills catalog:
-curl -X POST http://localhost:8000/admin/rebuild-catalog
-
 uvicorn app.main:app --reload --port 8000
 ```
 
-**Frontend:**
+Frontend:
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Open http://localhost:5173
+Open:
 
-**Environment variables (backend `.env`):**
+```text
+http://localhost:5173
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the backend folder if using LLM features.
 
 ```env
-HF_TOKEN=hf_xxxx              # HuggingFace token — get free at huggingface.co
-OPENAI_API_KEY=sk-xxxx        # Optional — used as LLM fallback
-HF_MODEL=google/flan-t5-large # Change to a different model if needed
-USE_LLM=true                   # Set false to disable LLM (faster, no API calls)
+HF_TOKEN=your_huggingface_token
+OPENAI_API_KEY=your_openai_key_optional
+HF_MODEL=google/flan-t5-large
+USE_LLM=true
 MAX_FILE_SIZE_MB=5
 ```
 
----
-
-## Apply-Ready verdict logic
-
-| Required skill coverage | Verdict | Colour |
-|------------------------|---------|--------|
-| ≥ 70 % | Apply Now | Green |
-| 40 – 69 % | Apply With Prep | Amber |
-| < 40 % | Build First | Red |
-
-The summary text is generated by the LLM using the score, missing required skills, job title, and candidate name.
+Do not commit `.env` to GitHub.
 
 ---
 
-## API reference
+## Example Use Cases
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/analyze/jd` | POST | Resume + JD → full gap analysis (primary endpoint) |
-| `/analyze` | POST | Resume + role_id → template-based analysis |
-| `/analyze/text` | POST | Plain text resume + role_id → analysis |
-| `/roles` | GET | List all role templates |
-| `/services` | GET | Learning resource catalog |
-| `/admin/rebuild-catalog` | POST | Rebuild skills_catalog.json from CSV |
-| `/health` | GET | Health check |
-| `/docs` | GET | Interactive Swagger UI |
+### 1. New Graduate
+
+A new graduate uploads a resume and a data analyst job description. JobSearchSaathi identifies missing SQL keywords, weak project bullets, and a lack of measurable results, then recommends resume improvements before applying.
+
+### 2. Career Changer
+
+A warehouse or customer-service worker wants to move into data analytics. JobSearchSaathi detects transferable skills but flags missing technical proof, suggesting Python/SQL projects and entry-level roles.
+
+### 3. Newcomer
+
+A newcomer to Canada uploads a resume for an AI or data role. The system identifies whether the resume lacks local proof, project evidence, or ATS-aligned keywords.
 
 ---
 
-## Project structure
+## Why It Is Different From a Keyword Matcher
 
+| Feature                        | Simple Keyword Matcher | JobSearchSaathi |
+| ------------------------------ | ---------------------: | --------------: |
+| Alias matching                 |                     No |             Yes |
+| Typo handling                  |                     No |             Yes |
+| Resume section awareness       |                     No |             Yes |
+| BERT NER extraction            |                     No |             Yes |
+| Semantic matching              |                     No |             Yes |
+| JD-aware retrieval             |                     No |             Yes |
+| Evidence and confidence scores |                     No |             Yes |
+| Apply-ready verdict            |                     No |             Yes |
+| Certification gap detection    |                     No |             Yes |
+| Experience gap detection       |                     No |             Yes |
+| Resume quality scoring         |                     No |             Yes |
+| Action plan generation         |                     No |             Yes |
+
+---
+
+## Current Status
+
+Implemented:
+
+* Resume upload and parsing
+* Role-template analysis
+* Job-description analysis
+* Multi-pass skill extraction
+* Readiness scoring
+* Skill gap detection
+* Certification, experience, and keyword gap logic
+* Resume quality scoring
+* Learning resource recommendations
+* React frontend
+* FastAPI backend
+* Docker deployment
+* Pytest test structure
+
+In progress / future improvements:
+
+* Larger evaluation dataset
+* More role templates
+* Stronger JD parsing
+* User accounts and saved reports
+* Database storage for feedback and analytics
+* Model monitoring dashboard
+* More advanced agentic workflows
+
+---
+
+## Evaluation Plan
+
+The project includes sample cases for testing. Future evaluation will measure:
+
+| Metric                     | Purpose                                                                  |
+| -------------------------- | ------------------------------------------------------------------------ |
+| Skill extraction precision | How many detected skills are correct                                     |
+| Skill extraction recall    | How many true skills are found                                           |
+| Gap precision              | Whether missing-skill recommendations are valid                          |
+| Readiness verdict accuracy | Whether Apply Now / Apply With Prep / Build First matches human judgment |
+| False positive skill rate  | Whether the system over-detects skills                                   |
+| Resume quality agreement   | Whether bullet scores align with human review                            |
+
+---
+
+## Target Roles Demonstrated
+
+This project demonstrates skills relevant to:
+
+* AI Engineer
+* Applied AI Engineer
+* Machine Learning Engineer
+* Data Analyst
+* Full-Stack AI Developer
+* NLP Engineer
+
+It is especially aligned with AI job-search platforms because it works on resume understanding, job matching, skill gap analysis, LLM-generated explanations, and career-readiness recommendations.
+
+---
+
+## Author
+
+**Hasyashri Bhatt**
+Kitchener, Ontario, Canada
+Email: [habhatt274@gmail.com](mailto:habhatt274@gmail.com)
+GitHub: https://github.com/Hasyashri
+
+---
+
+## License
+
+This project is for portfolio and educational use. Dataset licenses belong to their original providers. O*NET data is published by the U.S. Department of Labor under its own licensing terms.
+
+---
+
+## Repository
+
+```text
+https://github.com/Hasyashri/jobsearchsaathi_v2
 ```
-jobsearchsaathi-v2/
-├── backend/
-│   ├── app/
-│   │   ├── main.py              # FastAPI app, ASGI lifespan
-│   │   ├── config.py            # Settings via pydantic-settings
-│   │   ├── schemas.py           # All Pydantic models
-│   │   ├── routers/
-│   │   │   ├── analyze.py       # /analyze  /analyze/jd  /analyze/text
-│   │   │   ├── roles.py         # /roles
-│   │   │   ├── services.py      # /services
-│   │   │   ├── feedback.py      # /feedback
-│   │   │   └── admin.py         # /admin/rebuild-catalog
-│   │   └── services/
-│   │       ├── resume_parser.py     # PDF/DOCX/TXT extraction, section detection
-│   │       ├── skill_extractor.py   # Pass 1: alias matching
-│   │       ├── fuzzy_extractor.py   # Pass 2: RapidFuzz
-│   │       ├── ner_extractor.py     # Pass 3: BERT NER
-│   │       ├── semantic_matcher.py  # Pass 4: SBERT
-│   │       ├── rag_service.py       # Pass 5: FAISS RAG
-│   │       ├── jd_parser.py         # JD skill/cert/exp/keyword extraction
-│   │       ├── jd_gap_analyzer.py   # Gap analysis + apply verdict
-│   │       ├── llm_service.py       # HuggingFace + OpenAI LLM
-│   │       ├── resume_quality.py    # Bullet quality scoring
-│   │       ├── readiness_engine.py  # Readiness score (template mode)
-│   │       ├── recommendation.py    # Multi-role matching + career path
-│   │       ├── pipeline.py          # Orchestrates all passes
-│   │       └── catalog_builder.py   # Builds skills_catalog from CSV
-│   ├── data/
-│   │   ├── skills_catalog.json  # Auto-generated from O*NET CSV
-│   │   ├── role_templates.json  # 20+ pre-built role templates
-│   │   └── services_catalog.json
-│   ├── tests/
-│   └── requirements.txt
-├── frontend/
-│   ├── src/
-│   │   ├── main.jsx             # React entry + navbar
-│   │   ├── styles.css           # Light theme (navy/blue)
-│   │   ├── pages/
-│   │   │   ├── HomePage.jsx     # Dual-block input (resume + JD)
-│   │   │   └── ResultsPage.jsx  # Verdict + 6 tabs of gap analysis
-│   │   └── api/client.js        # fetch wrappers for all endpoints
-│   └── vite.config.js
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
-
----
-
-## Why JobSearchSaathi beats a simple keyword matcher
-
-| Feature | Simple keyword match | JobSearchSaathi |
-|---------|---------------------|-----------------|
-| Detects "ML" = "machine learning" | ✗ | ✓ (alias) |
-| Handles typos | ✗ | ✓ (fuzzy, threshold 82) |
-| Extracts skills from sentences | ✗ | ✓ (BERT NER) |
-| Understands context | ✗ | ✓ (SBERT semantic) |
-| JD-aware retrieval | ✗ | ✓ (FAISS RAG) |
-| LLM explanations | ✗ | ✓ (flan-t5 / GPT-3.5) |
-| Resume bullet quality | ✗ | ✓ |
-| Apply/Don't-apply verdict | ✗ | ✓ |
-| Experience gap detection | ✗ | ✓ |
-| ATS keyword gaps | ✗ | ✓ |
-| Career path intelligence | ✗ | ✓ |
-
----
-
-*Built as an AI/ML portfolio project targeting AI Engineer and ML Engineer roles in Canada.
-All model choices are explained with citations; all datasets are publicly available.*
-#   j o b s e a r c h s a a t h i _ v 2  
- #   j o b s e a r c h s a a t h i _ v 2  
- 
